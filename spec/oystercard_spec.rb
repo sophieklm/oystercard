@@ -26,7 +26,7 @@ describe Oystercard do
 
   describe '#in_journey' do
     it 'shows if the card is in a journey' do
-      expect(subject.in_journey).to be false
+      expect(subject.in_journey?).to be false
     end
   end
 
@@ -35,7 +35,7 @@ describe Oystercard do
     it 'changes in_journey to true' do
       subject.top_up(min_fare)
       subject.touch_in(@station)
-      expect(subject.in_journey).to be true
+      expect(subject.in_journey?).to be true
     end
     it 'raises an error if balance less than minumum fare' do
       expect{subject.touch_in(@station)}.to raise_error "Insufficient funds, you need to have the minimum amount (£#{min_fare}) for a single journey."
@@ -51,12 +51,16 @@ describe Oystercard do
     min_fare = Oystercard::MIN_FARE
     it 'changes in_journey to false' do
       subject.touch_out
-      expect(subject.in_journey).to be false
+      expect(subject.in_journey?).to be false
     end
-
     it 'changes the balance when touching out' do
       expect{subject.touch_out}.to change{subject.balance}.by(-min_fare)
     end
-
+    it 'forgets the entry station on touch out' do
+      subject.top_up(min_fare)
+      subject.touch_in(@station)
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
+    end
   end
 end
