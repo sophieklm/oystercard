@@ -1,6 +1,11 @@
 require 'oystercard'
 
 describe Oystercard do
+
+  before(:each) do
+    @station = double("Trafalgar Square")
+  end
+
   describe 'balance' do
     it 'sets a default balance to 0' do
       expect(subject.balance).to eq 0
@@ -29,11 +34,16 @@ describe Oystercard do
     min_fare = Oystercard::MIN_FARE
     it 'changes in_journey to true' do
       subject.top_up(min_fare)
-      subject.touch_in
+      subject.touch_in(@station)
       expect(subject.in_journey).to be true
     end
     it 'raises an error if balance less than minumum fare' do
-      expect{subject.touch_in}.to raise_error "Insufficient funds, you need to have the minimum amount (£#{min_fare}) for a single journey."
+      expect{subject.touch_in(@station)}.to raise_error "Insufficient funds, you need to have the minimum amount (£#{min_fare}) for a single journey."
+    end
+    it 'remembers the entry station after touch in' do
+      subject.top_up(min_fare)
+      subject.touch_in(@station)
+      expect(subject.entry_station).to eq @station
     end
   end
 
@@ -47,7 +57,6 @@ describe Oystercard do
     it 'changes the balance when touching out' do
       expect{subject.touch_out}.to change{subject.balance}.by(-min_fare)
     end
+
   end
-
-
 end
