@@ -33,4 +33,10 @@ describe Oystercard do
     end
   end
 
+  describe '#touch_in' do
+    it 'changes in_journey to true' do
+      
+    end
+  end
+
 end
