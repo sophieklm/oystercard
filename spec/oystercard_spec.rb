@@ -27,4 +27,10 @@ describe Oystercard do
     end
   end
 
+  describe '#in_journey' do
+    it 'shows if the card is in a journey' do
+      expect(subject.in_journey).to be false
+    end
+  end
+
 end
