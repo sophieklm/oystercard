@@ -1,12 +1,10 @@
 require 'journey'
+require 'oystercard'
 
 describe Journey do
-  let(:station) {double :station}
-  subject{described_class.new(station)}
-  it {is_expected.to respond_to(:start_journey)}
-  it {is_expected.to respond_to(:end_journey)}
-  it {is_expected.to respond_to(:calculate_fare)}
-  it {is_expected.to respond_to(:journey_complete?)}
+  let(:bank) {double :station}
+  let(:vauxhall) {double :station}
+  subject{described_class.new(bank)}
 
   describe '#initialize' do
     it 'has a entry station' do
@@ -14,6 +12,39 @@ describe Journey do
     end
     it 'has an exit station' do
       expect(subject).to respond_to(:exit_station)
+    end
+  end
+
+  describe '#start_journey' do
+    it 'sets #entry_station to parameter passed at initialization' do
+      expect(subject.entry_station).to eq bank
+    end
+  end
+
+  describe '#end_journey' do
+   it 'sets #exit_station to parameter it is passed' do
+      subject.end_journey(vauxhall)
+      expect(subject.exit_station).to eq vauxhall
+    end
+  end
+
+  describe '#journey_complete?' do
+    it 'checks values of entry station' do
+      expect(subject).to receive(:entry_station)
+      subject.journey_complete?
+    end
+
+    it 'checks values of exit station' do
+      expect(subject).to receive(:exit_station)
+      subject.journey_complete?
+    end
+  end
+
+  describe '#calculate_fare' do
+    it 'returns the minimum fare' do
+      oystercard = class_double(Oystercard).
+        as_stubbed_const(:transfer_nested_constants => true)
+      expect(subject.calculate_fare).to eq Oystercard::MIN_FARE
     end
   end
 
