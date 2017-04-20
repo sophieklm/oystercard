@@ -11,7 +11,7 @@ describe Oystercard do
   max_balance = Oystercard::MAX_BALANCE
 
   context 'card has just been initialized' do
-  
+
     describe '#balance' do
       it 'sets a default balance to 0' do
         expect(subject.balance).to eq 0
@@ -60,13 +60,20 @@ describe Oystercard do
         expect(subject.in_journey?).to be true
       end
       it 'remembers the entry station after touch in' do
-        expect(subject.entry_station).to eq entry_station
+        expect(subject.current_journey.entry_station).to eq entry_station
+      end
+      it 'creates a new journey' do
+        expect(subject.current_journey).to be_instance_of(Journey)
       end
     end
 
     describe '#touch_out' do
       it 'changes the balance when touching out' do
         expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-min_fare)
+      end
+      it 'change exit station for journey' do
+        subject.touch_out(exit_station)
+        expect(subject.current_journey.exit_station).to eq(exit_station)
       end
     end
   end
@@ -77,18 +84,15 @@ describe Oystercard do
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
     end
-    
+
     describe '#touch_out' do
       it 'changes in_journey to false' do
         expect(subject.in_journey?).to be false
       end
-      it 'forgets the entry station on touch out' do
-        expect(subject.entry_station).to be_nil
-      end
       it 'stores journeys' do
-        expect(subject.journeys).to include journey
+        expect(subject.journeys).to include subject.current_journey
       end
     end
   end
-      
+
 end

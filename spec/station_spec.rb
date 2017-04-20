@@ -29,9 +29,9 @@ describe Station do
 
     it 'loads first line from csv into @@stations' do
       subject.load_stations("stations.csv")
-      expect(subject.stations[0].name).to eq "Arsenal" 
+      expect(subject.stations[0].name).to eq "Arsenal"
     end
-      
+
   end
 
 
