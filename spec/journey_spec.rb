@@ -6,6 +6,14 @@ describe Journey do
   let(:vauxhall) {double :station}
   subject{described_class.new(bank)}
 
+  it 'has a penalty fare constant' do
+    expect(Journey::PENALTY_FARE).to eq 6
+  end
+
+  it 'has a minimum fare constant' do
+    expect(Journey::MIN_FARE).to eq 2
+  end
+
   describe '#initialize' do
     it 'has a entry station' do
       expect(subject).to respond_to(:entry_station)

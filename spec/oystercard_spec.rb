@@ -9,6 +9,7 @@ describe Oystercard do
 
   min_fare = Oystercard::MIN_FARE
   max_balance = Oystercard::MAX_BALANCE
+  penalty_fare = Oystercard::PENALTY_FARE
 
   context 'card has just been initialized' do
 
@@ -38,6 +39,7 @@ describe Oystercard do
         expect{subject.touch_in(entry_station)}.to raise_error "Insufficient funds, you need to have the minimum amount (£#{min_fare}) for a single journey."
       end
     end
+
   end
 
   describe '#top_up' do
@@ -51,7 +53,7 @@ describe Oystercard do
 
   context 'card is topped up and touched in' do
     before(:example) do
-      subject.top_up(min_fare)
+      subject.top_up(max_balance)
       subject.touch_in(entry_station)
     end
 
@@ -64,6 +66,24 @@ describe Oystercard do
       end
       it 'creates a new journey' do
         expect(subject.current_journey).to be_instance_of(Journey)
+      end
+
+      it 'checks if card is in_journey?' do
+        expect(subject).to receive(:in_journey?)
+        subject.touch_in(entry_station)
+      end
+
+      context 'card was not touched out' do
+        before(:example) { subject.touch_in(entry_station) }
+
+        it 'charges penalty fare' do
+          expect { subject.touch_in(entry_station) }.to change{ subject.balance }.by(-penalty_fare)
+        end
+
+        it 'stores incomplete journey with penalty_fare notification' do
+          expect(subject.journeys.last.exit_station). to eq :penalty_fare
+        end
+
       end
     end
 
