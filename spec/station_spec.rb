@@ -10,19 +10,28 @@ describe Station do
   end
 
   describe '.load_stations' do
-    file = CSV.generate do |csv|
-      csv << ["Trafalgar Square", 1]
-      csv << ["Edgware", 3]
+    subject { Station }
+
+    it 'checks the filename provided exists' do
+      expect(File).to receive(:exists?).with("stations.csv")
+      subject.load_stations("stations.csv")
     end
 
-    it 'checks existence of file' do
-      expect(File).to receive(:exists?).with("file")
+    before(:example) do
+      allow(File).to receive(:exists?).with("file").and_return(true)
+      allow(File).to receive(:exists?).with("stations.csv").and_return(true)
     end
 
-    xit 'loads a list of stations from csv' do
-      expect(File).to receive(:open).with("file", "r").and_return(file)
-      Station.load_stations(file)
+    it 'loads a list of stations from csv' do
+      expect(File).to receive(:open).with("stations.csv", {:universal_newline=>false}).and_return("stations.csv")
+      subject.load_stations("stations.csv")
     end
+
+    it 'loads first line from csv into @@stations' do
+      subject.load_stations("stations.csv")
+      expect(subject.stations[0].name).to eq "Arsenal" 
+    end
+      
   end
 
 
