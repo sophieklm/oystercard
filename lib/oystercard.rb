@@ -1,3 +1,4 @@
+# coding: utf-8
 class Oystercard
 
   MAX_BALANCE = 90
@@ -30,21 +31,18 @@ class Oystercard
     fail "Touch in before touching out." unless in_journey?
     deduct(MIN_FARE)
     @in_journey = false
-    store_journey(@entry_station,exit_station)
+    store_journey(entry_station, exit_station)
     @entry_station = nil
-  end
-
-  def store_journey(entry_station, exit_station)
-    journey = {}
-    journey[:entry_station] = entry_station
-    journey[:exit_station] = exit_station
-    @journeys << journey
   end
 
   private
 
   def deduct(value)
     @balance -= value
+  end
+
+  def store_journey(entry_station, exit_station)
+    self.journeys << { entry_station: entry_station, exit_station: exit_station }
   end
 
 end
