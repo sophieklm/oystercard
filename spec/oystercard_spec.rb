@@ -54,6 +54,8 @@ describe Oystercard do
 
   describe '#touch_out' do
     it 'changes the balance when touching out' do
+      subject.top_up(min_fare)
+      subject.touch_in(entry_station)
       expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-min_fare)
     end
     before do
