@@ -8,7 +8,7 @@ class Oystercard
   def initialize
     @balance = 0
     @entry_station
-    @journeys = {}
+    @journeys = []
   end
 
   def in_journey?
@@ -24,15 +24,21 @@ class Oystercard
     fail "Insufficient funds, you need to have the minimum amount (£#{MIN_FARE}) for a single journey." if @balance < MIN_FARE
     @in_journey = true
     @entry_station = station
-    @journeys[:entry_station] = station
   end
 
-  def touch_out(station)
+  def touch_out(exit_station)
+    fail "Touch in before touching out." unless in_journey?
     deduct(MIN_FARE)
     @in_journey = false
+    store_journey(@entry_station,exit_station)
     @entry_station = nil
-    @exit_station = station
-    @journeys[:exit_station] = station
+  end
+
+  def store_journey(entry_station, exit_station)
+    journey = {}
+    journey[:entry_station] = entry_station
+    journey[:exit_station] = exit_station
+    @journeys << journey
   end
 
   private
